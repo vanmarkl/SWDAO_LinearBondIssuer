@@ -1,6 +1,18 @@
 [default]
-src = 'src'
+solc_version = "0.8.13"
+src = 'contracts'
 out = 'out'
 libs = ['lib']
+chain_id = 137 
+eth_rpc_url = "https://rpc.ankr.com/polygon"
+block_number = 26759360
+optimizer = true
+optimizer_runs = 1000000
+fuzz_runs = 10
+gas_price = 31000000000
+priority_fee = 31000000000
+
+[fulltest]
+fuzz_runs = 10000
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
