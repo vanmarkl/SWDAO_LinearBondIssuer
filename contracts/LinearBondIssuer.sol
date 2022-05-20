@@ -132,6 +132,8 @@ contract LinearBondIssuer {
 	/// @dev Named as such to make its intention less ambiguous
 	/// @param amount The amount of liquidity tokens for the user to sell in the bond
 	function stake(uint amount) external {
+		if (amount == 0)
+			revert NotAvailable();
 		Slot0 memory _slot0 = slot0;
 		if (_slot0.totalBalanceRemaining == 0)
 			revert NotAvailable();
@@ -151,6 +153,8 @@ contract LinearBondIssuer {
 			swdReceived = safeMul(swdReceived, 1000 + bonusPercent) / 1000;
 		}
 		if (swdReceived > _slot0.totalBalanceRemaining)
+			revert NotAvailable();
+		if (swdReceived < TIME_TO_MATURITY) // Prevents division rounding to zero
 			revert NotAvailable();
 		bonds[msg.sender].push(
 			Bond(
@@ -188,6 +192,13 @@ contract LinearBondIssuer {
 			(uint bptValue, uint swdValue) = BPT.getValue();
 			bptAmount = safeMul(swdWithoutBonus, swdValue) / bptValue;
 		}
+		bonds[msg.sender].push(
+			Bond(
+				uint96(block.timestamp),
+				_slot0.totalBalanceRemaining,
+				0
+			)
+		);
 		_slot0.totalBalanceRemaining = 0;
 		_slot0.bonusResetDate = uint48(block.timestamp);
 		slot0 = _slot0;
@@ -209,10 +220,12 @@ contract LinearBondIssuer {
 					unchecked { ++i; }
 					continue;
 				}
-				uint bondSwdAvailable = safeMul(
-					bond.balance / TIME_TO_MATURITY,
-					block.timestamp - bond.creationDate
-				);
+				uint bondSwdAvailable = block.timestamp >= bond.creationDate + TIME_TO_MATURITY ?
+					bond.balance :
+					safeMul(
+						bond.balance / TIME_TO_MATURITY,
+						block.timestamp - bond.creationDate
+					);
 				if (bondSwdAvailable > bond.balance)
 					bondSwdAvailable = bond.balance;
 				bondSwdAvailable -= bond.withdrawn;
@@ -230,9 +243,11 @@ contract LinearBondIssuer {
 
 	/// @notice Adds SWD to the bondable balance of the contract
 	/// @param amount The amount of SWD to transfer for bonding
-	function addBalance(uint amount) external onlyOwner {
+	function addBalance(uint80 amount) external onlyOwner {
+		if (amount == 0)
+			revert NotAvailable();
 		Slot0 memory _slot0 = slot0;
-		_slot0.totalBalanceRemaining += uint80(amount);
+		_slot0.totalBalanceRemaining += amount;
 		_slot0.bonusResetDate = uint48(block.timestamp);
 		slot0 = _slot0;
 		if (!SWD.transferFrom(msg.sender, address(this), amount))
@@ -289,12 +304,8 @@ contract LinearBondIssuer {
 			token.balanceOf(address(this));
 		if (isSwd)
 			_slot0.totalBalanceRemaining = 0;
-		if (
-			!token.transfer(
-				_owner,
-				balance
-			)
-		) revert TransferFailed();
+		if (!token.transfer(_owner, balance))
+			revert TransferFailed();
 		emit WithdrawToken(_owner, address(token));
 	}
 
@@ -311,10 +322,12 @@ contract LinearBondIssuer {
 				unchecked { ++i; }
 				continue;
 			}
-			uint bondSwdAvailable = safeMul(
-				bond.balance / TIME_TO_MATURITY,
-				block.timestamp - bond.creationDate
-			);
+			uint bondSwdAvailable = block.timestamp >= bond.creationDate + TIME_TO_MATURITY ?
+					bond.balance :
+					safeMul(
+						bond.balance / TIME_TO_MATURITY,
+						block.timestamp - bond.creationDate
+					);
 			if (bondSwdAvailable > bond.balance)
 				bondSwdAvailable = bond.balance;
 			bondSwdAvailable -= bond.withdrawn;
