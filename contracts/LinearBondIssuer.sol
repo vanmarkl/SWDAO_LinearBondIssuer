@@ -323,11 +323,11 @@ contract LinearBondIssuer {
 				continue;
 			}
 			uint bondSwdAvailable = block.timestamp >= bond.creationDate + TIME_TO_MATURITY ?
-					bond.balance :
-					safeMul(
-						bond.balance / TIME_TO_MATURITY,
-						block.timestamp - bond.creationDate
-					);
+				bond.balance :
+				safeMul(
+					bond.balance / TIME_TO_MATURITY,
+					block.timestamp - bond.creationDate
+				);
 			if (bondSwdAvailable > bond.balance)
 				bondSwdAvailable = bond.balance;
 			bondSwdAvailable -= bond.withdrawn;
