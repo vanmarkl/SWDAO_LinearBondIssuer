@@ -23,7 +23,7 @@ contract LinearBondIssuer {
 		ICustomBalancerPoolMinimal(0x0000000000000000000000000000000000000000);
 	IERC20 constant SWD = IERC20(0xaeE24d5296444c007a532696aaDa9dE5cE6caFD0);
 	uint constant TIME_TO_MATURITY = 104 weeks; // Two years
-	uint constant TIME_TO_MAX_BONUS = 4 weeks;
+	uint constant TIME_TO_MAX_BONUS = 8 weeks;
 	
 	struct Slot0 {
 		// Tally of all SWD within the contract that's unbonded

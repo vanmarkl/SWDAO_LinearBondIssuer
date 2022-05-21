@@ -126,7 +126,7 @@ contract ContractTest is Test {
 		issuer.stake(1000000e18);
 		uint availableLast01 = issuer.balanceAvailableFuture(a);
 		assertEq(availableLast01, (100000e18 * (1000 + uint(min))) / 1000);
-		vm.warp(block.timestamp + 2 weeks);
+		vm.warp(block.timestamp + 4 weeks);
 		issuer.stake(1000000e18);
 		uint availableLast02 = issuer.balanceAvailableFuture(a);
 		assertApproxEqRel(
@@ -134,7 +134,7 @@ contract ContractTest is Test {
 			availableLast01 + ((100000e18 * (1000 + ((uint(min) + uint(max)) / 2))) / 1000),
 			1e16
 		);
-		vm.warp(block.timestamp + 4 weeks);
+		vm.warp(block.timestamp + 8 weeks);
 		issuer.stake(1000000e18);
 		vm.stopPrank();
 		availableLast01 = issuer.balanceAvailableFuture(a);
