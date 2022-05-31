@@ -127,9 +127,9 @@ contract LinearBondIssuer {
 	struct Slot0 {
 		// Tally of all SWD within the contract that's unbonded
 		uint80 totalBalanceRemaining;
-		// The minimum bond bonus (in tenth's of a percent)
+		// The minimum bond bonus (percent)
 		uint8 bonusMin;
-		// The maximum bond bonus (in tenth's of a percent)
+		// The maximum bond bonus (percent)
 		uint8 bonusMax;
 		// A calculated value, used to linearly change the bonus over a period of time:
 		// of length [TIME_TO_MAX_BONUS]
@@ -210,8 +210,8 @@ contract LinearBondIssuer {
 	}
 
 	/// @dev Sets the initial bonus min/max, as well as the initial owner to msg.sender
-	/// @param bonusMin The initial minimum bonus (in tenths of a percent)
-	/// @param bonusMax The initial maximum bonus (in tenths of a percent)
+	/// @param bonusMin The initial minimum bonus (percent)
+	/// @param bonusMax The initial maximum bonus (percent)
 	constructor(uint8 bonusMin, uint8 bonusMax) {
 		if (bonusMin > bonusMax)
 			revert MinAboveMax();
@@ -249,7 +249,7 @@ contract LinearBondIssuer {
 						_slot0.bonusModifier
 					) / EIGHTEEN_DECIMALS
 				) + _slot0.bonusMin;
-			swdReceived = safeMul(swdReceived, 1000 + bonusPercent) / 1000;
+			swdReceived = safeMul(swdReceived, 100 + bonusPercent) / 100;
 		}
 		if (swdReceived > _slot0.totalBalanceRemaining)
 			revert NotAvailable();
@@ -287,7 +287,7 @@ contract LinearBondIssuer {
 					) / EIGHTEEN_DECIMALS
 				) + _slot0.bonusMin;
 			uint swdWithoutBonus =
-				safeMul(_slot0.totalBalanceRemaining, 1000) / (1000 + bonusPercent);
+				safeMul(_slot0.totalBalanceRemaining, 100) / (100 + bonusPercent);
 			(uint bptValue, uint swdValue) = BPT.getValue();
 			bptAmount = safeMul(swdWithoutBonus, swdValue) / bptValue;
 		}

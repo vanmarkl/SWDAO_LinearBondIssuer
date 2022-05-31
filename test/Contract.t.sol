@@ -23,7 +23,7 @@ contract ContractTest is Test {
 		FakePool fakePool = new FakePool();
 		vm.etch(address(0), address(fakePool).code);
 		delete fakePool;
-		issuer = new LinearBondIssuer(50, 250);
+		issuer = new LinearBondIssuer(5, 25);
 		deal(address(SWD), address(this), 500000e18);
 		SWD.approve(address(issuer), 500000e18);
 		issuer.addBalance(500000e18);
@@ -123,22 +123,22 @@ contract ContractTest is Test {
 		assertEq(min, x);
 		assertEq(max, y);
 		vm.startPrank(a, a);
-		issuer.stake(1000000e18);
+		issuer.stake(1000000e17);
 		uint availableLast01 = issuer.balanceAvailableFuture(a);
-		assertEq(availableLast01, (100000e18 * (1000 + uint(min))) / 1000);
+		assertEq(availableLast01, (100000e17 * (100 + uint(min))) / 100);
 		vm.warp(block.timestamp + 4 weeks);
-		issuer.stake(1000000e18);
+		issuer.stake(1000000e17);
 		uint availableLast02 = issuer.balanceAvailableFuture(a);
 		assertApproxEqRel(
 			availableLast02,
-			availableLast01 + ((100000e18 * (1000 + ((uint(min) + uint(max)) / 2))) / 1000),
+			availableLast01 + ((100000e17 * (100 + ((uint(min) + uint(max)) / 2))) / 100),
 			1e16
 		);
 		vm.warp(block.timestamp + 8 weeks);
-		issuer.stake(1000000e18);
+		issuer.stake(1000000e17);
 		vm.stopPrank();
 		availableLast01 = issuer.balanceAvailableFuture(a);
-		assertEq(availableLast01, availableLast02 + ((100000e18 * (1000 + uint(max))) / 1000));
+		assertEq(availableLast01, availableLast02 + ((100000e17 * (100 + uint(max))) / 100));
 	}
 
 	function test_ownerTransfer(address a, bool b) public {
