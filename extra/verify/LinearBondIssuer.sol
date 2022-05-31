@@ -118,8 +118,8 @@ contract LinearBondIssuer {
 	// Useful in preserving precision when dividing integers
 	uint constant EIGHTEEN_DECIMALS = 1e18;
 
-	ICustomBalancerPoolMinimal constant BPT = // MUST BE CHANGED BEFORE DEPLOYMENT
-		ICustomBalancerPoolMinimal(0x0000000000000000000000000000000000000000);
+	ICustomBalancerPoolMinimal constant BPT =
+		ICustomBalancerPoolMinimal(0x24Ec3C300Ff53b96937c39b686844dB9E471421e);
 	IERC20 constant SWD = IERC20(0xaeE24d5296444c007a532696aaDa9dE5cE6caFD0);
 	uint constant TIME_TO_MATURITY = 104 weeks; // Two years
 	uint constant TIME_TO_MAX_BONUS = 8 weeks;

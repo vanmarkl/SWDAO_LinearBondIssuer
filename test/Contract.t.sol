@@ -21,7 +21,7 @@ contract ContractTest is Test {
 
 	function setUp() public {
 		FakePool fakePool = new FakePool();
-		vm.etch(address(0), address(fakePool).code);
+		vm.etch(0x24Ec3C300Ff53b96937c39b686844dB9E471421e, address(fakePool).code);
 		delete fakePool;
 		issuer = new LinearBondIssuer(5, 25);
 		deal(address(SWD), address(this), 500000e18);
