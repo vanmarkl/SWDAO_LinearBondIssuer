@@ -306,6 +306,7 @@ contract LinearBondIssuer {
 			_slot0.totalBalanceRemaining = 0;
 		if (!token.transfer(_owner, balance))
 			revert TransferFailed();
+		slot0 = _slot0;
 		emit WithdrawToken(_owner, address(token));
 	}
 
